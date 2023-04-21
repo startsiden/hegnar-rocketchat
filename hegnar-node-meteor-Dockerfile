@@ -1,0 +1,50 @@
+FROM node:14.21.3-slim
+# SHELL ["/bin/bash", "-c"]
+
+# ENV NVM_DIR /home/mt/.nvm
+# ENV NODE_VERSION 14.21.3
+# ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+# ENV PATH /home/mt/.meteor:$PATH
+# ENV TOOL_NODE_FLAGS --max-old-space-size=8192
+ENV METEOR_ALLOW_SUPERUSER=1
+
+# # Create and add user
+# RUN useradd -ms /bin/bash mt
+# USER mt
+# WORKDIR /home/mt
+#####
+# If added before meteor, says:
+# Error: EACCES: permission denied, access '/usr/local/lib/node_modules'
+#####
+
+# Install meteor
+RUN npm install --unsafe-perm -g meteor@latest
+#####
+# says:
+#  => => # /usr/local/bin/meteor-installer -> /usr/local/lib/node_modules/meteor/cli.js                                                                                                                                                                                                                                     
+#  => => # > meteor@2.11.0 install /usr/local/lib/node_modules/meteor                                                                                                                                                                                                                                                       
+#  => => # > node cli.js install                                                                                                                                                                                                                                                                                            
+#  => => # You are running the install script as root, without SUDO. This is not recommended and should be avoided. Continuing.
+#####
+
+# Create and add user
+RUN useradd -ms /bin/bash mt
+USER mt
+WORKDIR /home/mt
+
+# RUN curl "https://install.meteor.com/" | /bin/bash
+# ENV PATH=$PATH:/root/.meteor
+
+# RUN export PATH=/root/.meteor/meteor:$PATH
+
+# COPY --chown=mt . .
+# COPY . .
+
+# RUN cd apps/meteor && yarn
+
+
+# Next line throws a "/bin/sh: 1: meteor: not found"  
+# RUN cd apps/meteor && meteor build --server-only --directory /my-build
+
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+# ENTRYPOINT ["meteor"]

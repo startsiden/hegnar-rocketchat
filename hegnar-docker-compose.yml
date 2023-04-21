@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  rocketchat:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: hegnar-Dockerfile
+    image: rocket.chat
+    container_name: hegnar-rocketchat
+    volumes:
+      - ./:/root
+    environment:
+      - TEST_MODE=true
+      - EXIT_UNHANDLEDPROMISEREJECTION=true
+      - MONGO_URL=mongodb://mongo:27017/rocketchat?replicaSet=rs0
+      - MONGO_OPLOG_URL=mongodb://mongo:27017/local?replicaSet=rs0
+      - TRANSPORTER=nats://nats:4222
+      - MOLECULER_LOG_LEVEL=info
+      - ROCKETCHAT_LICENSE=lalalalalala
+      - OVERWRITE_SETTING_Log_Level=2
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    depends_on:
+      - traefik
+      - mongo
+    labels:
+      traefik.enable: true
+      traefik.http.services.rocketchat.loadbalancer.server.port: 3000
+      traefik.http.routers.rocketchat.service: rocketchat
+      traefik.http.routers.rocketchat.rule: PathPrefix(`/`)
+
+  mongo:
+    image: docker.io/bitnami/mongodb:4.4
+    container_name: hegnar-mongo
+    restart: on-failure
+    ports:
+      - 27017:27017
+    environment:
+      MONGODB_REPLICA_SET_MODE: primary
+      MONGODB_REPLICA_SET_NAME: rs0
+      MONGODB_PORT_NUMBER: 27017
+      MONGODB_INITIAL_PRIMARY_HOST: mongo
+      MONGODB_INITIAL_PRIMARY_PORT_NUMBER: 27017
+      MONGODB_ADVERTISED_HOSTNAME: mongo
+      MONGODB_ENABLE_JOURNAL: true
+      ALLOW_EMPTY_PASSWORD: yes
+
+  traefik:
+    image: traefik:v2.8
+    container_name: hegnar-traefik
+    command:
+      - --providers.docker=true
+    ports:
+      - 3000:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

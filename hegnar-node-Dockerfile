@@ -1,0 +1,75 @@
+#####
+# Starting live without building
+#####
+FROM node:14.21.3-slim
+
+ENV NPM_CONFIG_PREFIX=~/.npm-global
+ENV PATH=/home/sinisa_user/.meteor:$PATH
+# ENV TOOL_NODE_FLAGS=--max-old-space-size=8192
+
+# Create and add user
+RUN useradd --create-home --shell /bin/bash -g root sinisa_user
+USER sinisa_user
+WORKDIR /home/sinisa_user
+
+# RUN chown -R sinisa_user:root /usr/local/lib/node_modules
+RUN mkdir ~/.npm-global
+
+#####
+# Install yarn - read yarn's official documentation on how to install yarn.
+#####
+
+#####
+# Install Meteor - read the official documentation on how to install Meteor.
+#####
+RUN npm install -g meteor@latest
+
+COPY . /rocketchat-src
+
+#####
+# Initialize the meteor framework. 
+# This will show the version of meteor requested by Rocket.Chat (incidentally, specified in apps/meteor/.meteor/release) and will initialize it as a side-effect.
+#####
+RUN cd rocketchat-src/apps/meteor
+RUN meteor --version
+RUN cd ../..
+
+USER root
+
+#####
+# Install all needed packages and build the Rocket.Chat app
+#####
+RUN yarn
+# RUN yarn build
+
+USER sinisa_user
+
+# RUN cd apps/meteor
+# RUN meteor build --server-only --directory /home/sinisa_user/rocketchat-build
+
+RUN echo "pwd: " && pwd
+
+EXPOSE 3000
+
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
+
+#####
+# Start your development server
+# There are two ways to start the server. For systems with >= 16 GB of memory, use
+# yarn dev
+# For systems with less than 16 GB of memory, use
+# yarn dsv
+#####
+CMD ["bash", "-c", "yarn dsv"]
+
+# ENV DEPLOY_METHOD=docker \
+#     NODE_ENV=production \
+#     MONGO_URL=mongodb://mongo:27017/rocketchat \
+#     HOME=/tmp \
+#     PORT=3000 \
+#     ROOT_URL=http://localhost:3000 \
+#     Accounts_AvatarStorePath=/app/uploads
+
+# EXPOSE 3000
+
+# CMD ["node", "main.js"]

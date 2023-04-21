@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  rocketchat:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: hegnar-node-meteor-Dockerfile
+    image: rocket.chat
+    container_name: hegnar-meteor-rocketchat
+    environment:
+      - TOOL_NODE_FLAGS=--max-old-space-size=8192
