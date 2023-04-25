@@ -8,7 +8,8 @@ describe('parseMessageSearchQuery', () => {
 		user: createFakeUser(),
 	};
 
-	const utcOffset = new Date().getTimezoneOffset() / 60;
+	// const utcOffset = new Date().getTimezoneOffset() / 60;
+	const utcOffset = 0;
 
 	[
 		{
