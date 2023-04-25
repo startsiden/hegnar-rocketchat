@@ -9,7 +9,7 @@ describe('parseMessageSearchQuery', () => {
 	};
 
 	// const utcOffset = new Date().getTimezoneOffset() / 60;
-	const utcOffset = 0;
+	// const utcOffset = 1;
 
 	[
 		{
@@ -83,17 +83,20 @@ describe('parseMessageSearchQuery', () => {
 		},
 		{
 			text: 'before:01-01-2023',
-			query: { ts: { $lte: new Date(2023, 0, 1, utcOffset) } },
+			// query: { ts: { $lte: new Date(2023, 0, 1, utcOffset) } },
+			query: { ts: { $lte: new Date(2023, 0, 1) } },
 			options: { projection: {}, sort: { ts: -1 }, skip: 0, limit: 20 },
 		},
 		{
 			text: 'after:01-01-2023',
-			query: { ts: { $gte: new Date(2023, 0, 2, utcOffset) } },
+			// query: { ts: { $gte: new Date(2023, 0, 2, utcOffset) } },
+			query: { ts: { $gte: new Date(2023, 0, 2) } },
 			options: { projection: {}, sort: { ts: -1 }, skip: 0, limit: 20 },
 		},
 		{
 			text: 'on:01-01-2023',
-			query: { ts: { $gte: new Date(2023, 0, 1, utcOffset), $lt: new Date(2023, 0, 2, utcOffset) } },
+			// query: { ts: { $gte: new Date(2023, 0, 1, utcOffset), $lt: new Date(2023, 0, 2, utcOffset) } },
+			query: { ts: { $gte: new Date(2023, 0, 1), $lt: new Date(2023, 0, 2) } },
 			options: { projection: {}, sort: { ts: -1 }, skip: 0, limit: 20 },
 		},
 		{
