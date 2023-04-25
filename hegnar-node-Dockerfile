@@ -24,32 +24,34 @@ RUN mkdir ~/.npm-global
 #####
 RUN npm install -g meteor@latest
 
-COPY . /rocketchat-src
+COPY ./.husky /rocketchat-src
 
 #####
 # Initialize the meteor framework. 
 # This will show the version of meteor requested by Rocket.Chat (incidentally, specified in apps/meteor/.meteor/release) and will initialize it as a side-effect.
 #####
-RUN cd rocketchat-src/apps/meteor
-RUN meteor --version
-RUN cd ../..
+RUN echo "pwd: " && pwd
+# RUN cd ../..
+# RUN cd rocketchat-src/apps/meteor
+# RUN meteor --version
+# RUN cd ../..
 
-USER root
+# USER root
 
 #####
 # Install all needed packages and build the Rocket.Chat app
 #####
-RUN yarn
+# RUN yarn
 # RUN yarn build
 
-USER sinisa_user
+# USER sinisa_user
 
 # RUN cd apps/meteor
 # RUN meteor build --server-only --directory /home/sinisa_user/rocketchat-build
 
-RUN echo "pwd: " && pwd
+# RUN echo "pwd: " && pwd
 
-EXPOSE 3000
+# EXPOSE 3000
 
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 
@@ -60,7 +62,7 @@ EXPOSE 3000
 # For systems with less than 16 GB of memory, use
 # yarn dsv
 #####
-CMD ["bash", "-c", "yarn dsv"]
+# CMD ["bash", "-c", "yarn dsv"]
 
 # ENV DEPLOY_METHOD=docker \
 #     NODE_ENV=production \
